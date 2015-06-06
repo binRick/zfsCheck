@@ -13,9 +13,9 @@ r.connect({
     r.dbCreate(process.env.rethinkDatabase).run(conn, function(err, result) {
         r.db(process.env.rethinkDatabase).tableCreate(process.env.rethinkTable).run(conn, function(err, result) {
             r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
-                //insert({
-                //                hostname: os.hostname()
-                //            }).
+//                insert({
+//                                hostname: os.hostname(),
+//                            }).
             filter(r.row('hostname').eq(os.hostname())).update({
                 os: {
                     ts: new Date().getTime(),
