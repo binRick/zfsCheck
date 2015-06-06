@@ -69,7 +69,7 @@ _.each(Commands, function(Command) {
 async.parallelLimit(tasks, limit, function(err, results) {
     if (err) throw err;
     console.log(results);
-    if (process.argv[3] == '--server') {
+    if (process.argv[4] == '--server') {
 
         var express = require('express');
         var app = new express();

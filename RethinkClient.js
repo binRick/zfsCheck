@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 var r = require('rethinkdb'),
     pj = require('prettyjson'),
     os = require('os'),
@@ -7,9 +6,9 @@ var r = require('rethinkdb'),
     trim = require('trim'),
     child = require('child_process');
 
-var vmFields = ['ctid', 'status', 'private'];
-var cmd = '/usr/sbin/vzlist -ajo ' + vmFields.join(',');
-var VMs = JSON.parse(child.execSync(cmd).toString());
+//var vmFields = ['ctid', 'status', 'private'];
+//var cmd = '/usr/sbin/vzlist -ajo ' + vmFields.join(',');
+//var VMs = JSON.parse(child.execSync(cmd).toString());
 
 //console.log(VMs);
 //process.exit();
@@ -31,9 +30,14 @@ r.connect({
             totalmem: os.totalmem(),
             platform: os.platform(),
             kernel: os.release(),
-            vms: VMs,
+//            vms: VMs,
         }
     };
+
+var cat = process.argv[2] || 'undefinedCategory';
+var val = process.argv[3] || 'undefinedValue';
+
+Update[cat] = val;
     console.log(pj.render(Update));
 
     r.dbCreate(process.env.rethinkDatabase).run(conn, function(err, result) {
