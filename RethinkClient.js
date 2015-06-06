@@ -35,6 +35,22 @@ r.connect({
                 console.log(typeof(res));
                 console.log(typeof(res['generated_keys']));
                 console.log(typeof(res['_type']));
+                if (typeof(res['errors']) == 'number') {
+if(res['errors']==0){
+
+if(res['replaced']==0){
+            r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
+                insert({
+                                hostname: os.hostname(),
+                            }).
+            run(conn, function(err, res) {
+                if (err) throw err;
+                console.log(res);
+});
+
+}
+}
+}
                 if (typeof(res['_type']) == 'number') {
                     console.log('query');
                     res.toArray(function(err, result) {
