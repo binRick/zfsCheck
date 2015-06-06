@@ -1,21 +1,21 @@
-module.exports.Commands = [
-{
+module.exports.zfsInfo = [{
         key: 'availableBytes',
         'title': 'Available Bytes',
-        cmd1: 'zfs get -H -o value -p available tank',
-        cmd: 'cd /root && ls zfsCheck || git clone https://github.com/binRick/zfsCheck',
+        cmd: 'zfs get -H -o value -p available tank',
+    }, {
+        key: 'poolHealth',
+        'title': 'Pool Health',
+        cmd: 'zpool get -H -p health tank',
+        process: function(stdOut) {
+            return stdOut.split('\t')[2];
+        },
+    }, {
+        key: 'filesystems',
+        'title': 'Filesystems',
+        cmd: 'zfs list -H -o name -p | grep ^tank/ | grep ^tank/Snapshots/ -v',
         process: function(stdOut) {
             return stdOut.split('\n');
         },
-    },
-{
-        key: 'availableBytes',
-        'title': 'Available Bytes',
-        cmd: 'cd /root/zfsCheck && stat RethinkClient.js | grep Modify',
-        process: function(stdOut) {
-            return stdOut.split('\n');
-        },
-    },
-
-
-];
+    }];
+module.exports.Install = [];
+        //cmd: 'cd /root && ls zfsCheck || git clone https://github.com/binRick/zfsCheck',

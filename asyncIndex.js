@@ -18,7 +18,8 @@ var hosts = fs.readFileSync(__dirname + '/hosts.txt').toString().split('\n').map
 });
 var LIM = process.argv[2] || 1;
 hosts = hosts.slice(0, LIM);
-var Commands = require('./Commands.js').Commands;
+var Commands = require('./Commands.js')[process.argv[3] || 'zfsInfo'];
+
 var tasks = [];
 
 _.each(Commands, function(Command) {
