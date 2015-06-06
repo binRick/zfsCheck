@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-var dir = require('direktor'),
-    c = require('chalk'),
+    var c = require('chalk'),
     servers = ['cassi', 'enterprise'],
     _ = require('underscore'),
     Client = require('ssh2').Client;
