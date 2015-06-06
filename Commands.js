@@ -20,8 +20,16 @@ module.exports.zfsInfo = [{
 module.exports.Install = [{
     key: 'installZfsCheck',
     'title': 'Install zfsCheck',
-    cmd: 'cd /root && ls zfsCheck || git clone https://github.com/binRick/zfsCheck',
+    cmd: 'cd /root/zfsCheck || git clone https://github.com/binRick/zfsCheck',
+    //cd /root && ls zfsCheck || git clone https://github.com/binRick/zfsCheck',
     process: function(stdOut) {
         return stdOut.split('\n');
+    }
+}, {
+    key: 'updateZfsCheck',
+    title: 'Update Zfs Check',
+    cmd: 'git pull --dry-run | grep -q -v \'Already up-to-date.\' && git pull',
+    process: function(o) {
+        return o.split('\n');
     },
 }];
