@@ -51,8 +51,8 @@ _.each(Commands, function(Command) {
                                 data: data,
                             });
                         }).stderr.on('data', function(data) {
-                            console.log('STDERR: ' + data);
-                            callback(data, null);
+                            console.log(c.red.bgWhite('STDERR: ' + data));
+//                            callback(data, null);
                         });
                     });
                 }).connect({

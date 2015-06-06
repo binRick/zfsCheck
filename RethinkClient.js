@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var r = require('rethinkdb'),
+    pj = require('prettyjson'),
     os = require('os'),
     fs = require('fs'),
     trim = require('trim'),
@@ -18,24 +19,27 @@ r.connect({
     port: process.env.rethinkPort,
 }, function(err, conn) {
     if (err) throw err;
+    var Update = {
+        os: {
+            ts: new Date().getTime(),
+            hostname: os.hostname(),
+            networkInterfaces: os.networkInterfaces(),
+            cpus: os.cpus().length,
+            uptime: os.uptime(),
+            loadavg: os.loadavg(),
+            freemem: os.freemem(),
+            totalmem: os.totalmem(),
+            platform: os.platform(),
+            kernel: os.release(),
+            vms: VMs,
+        }
+    };
+    console.log(pj.render(Update));
+
     r.dbCreate(process.env.rethinkDatabase).run(conn, function(err, result) {
         r.db(process.env.rethinkDatabase).tableCreate(process.env.rethinkTable).run(conn, function(err, result) {
             r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
-            filter(r.row('hostname').eq(os.hostname())).update({
-                os: {
-                    ts: new Date().getTime(),
-                    hostname: os.hostname(),
-                    networkInterfaces: os.networkInterfaces(),
-                    cpus: os.cpus().length,
-                    uptime: os.uptime(),
-                    loadavg: os.loadavg(),
-                    freemem: os.freemem(),
-                    totalmem: os.totalmem(),
-                    platform: os.platform(),
-                    kernel: os.release(),
-                    vms: VMs,
-                }
-            }).
+            filter(r.row('hostname').eq(os.hostname())).update(Update).
             run(conn, function(err, res) {
                 if (err) throw err;
                 console.log(typeof(res));
