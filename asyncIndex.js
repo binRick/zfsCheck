@@ -18,8 +18,6 @@ var hosts = fs.readFileSync(__dirname + '/hosts.txt').toString().split('\n').map
 });
 var LIM = process.argv[2] || 1;
 hosts = hosts.slice(0, LIM);
-//console.log(pj.render(hosts));
-//process.exit();
 var Commands = require('./Commands.js').Commands;
 var tasks = [];
 
@@ -39,7 +37,7 @@ _.each(Commands, function(Command) {
                             conn.end();
                         }).on('data', function(data) {
                             data = trim(data.toString());
-                            if (typeof(Command.process) == 'function') 
+                            if (typeof(Command.process) == 'function')
                                 data = Command.process(data);
                             callback(null, {
                                 server: server,
@@ -70,4 +68,27 @@ _.each(Commands, function(Command) {
 async.parallelLimit(tasks, limit, function(err, results) {
     if (err) throw err;
     console.log(results);
+    if (process.argv[3] == '--server') {
+
+        var express = require('express');
+        var app = new express();
+
+        app.get('/', function(req, res) {
+            res.end('holla');
+        });
+
+app.get('/hosts', function(req, res){
+res.json(_.pluck(results, 'server'));
+});
+
+        app.get('/host/:host', function(req, res) {
+var R = _.where(results, {server: req.params.host});
+                res.json(R);
+        });
+
+        app.listen(process.env.PORT || 31992);
+
+
+
+    }
 });
