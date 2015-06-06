@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+pj = require('prettyjson');
 var r = require('rethinkdb');
 
 var connection = null;
@@ -15,7 +15,7 @@ r.connect({
         if (err) throw err;
         cursor.each(function(err, row) {
             if (err) throw err;
-console.log(row);
+console.log(pj.render(row));
 //            console.log(JSON.stringify(row, null, 2));
         });
     });
