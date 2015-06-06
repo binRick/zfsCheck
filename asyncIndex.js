@@ -21,44 +21,46 @@ hosts = hosts.slice(0, LIM);
 //console.log(pj.render(hosts));
 //process.exit();
 
-var cmd = 'zfs get -H -o value -p available tank';
-
+var cmds = ['zfs get -H -o value -p available tank', 'zpool get -H -p health tank'];
 var tasks = [];
-_.each(hosts, function(server) {
-    tasks.push(
-        function(callback) {
-            var conn = new Client();
-            var start = new Date().getTime();
-            conn.on('ready', function() {
-                var data = '';
-                //                console.log(c.green('Connected to', server));
-                conn.exec(cmd, function(err, stream) {
-                    if (err) throw err;
-                    stream.on('close', function(code, signal) {
-                        conn.end();
-                    }).on('data', function(data) {
-                        data = data.toString();
-                        callback(null, {
-                            server: server,
-                            cmd: cmd,
-                            started: start,
-                            millisecs: new Date().getTime() - start,
-                            ts: new Date().getTime(),
-                            data: trim(data),
+
+_.each(cmds, function(cmd) {
+    _.each(hosts, function(server) {
+        tasks.push(
+            function(callback) {
+                var conn = new Client();
+                var start = new Date().getTime();
+                conn.on('ready', function() {
+                    var data = '';
+                    //                console.log(c.green('Connected to', server));
+                    conn.exec(cmd, function(err, stream) {
+                        if (err) throw err;
+                        stream.on('close', function(code, signal) {
+                            conn.end();
+                        }).on('data', function(data) {
+                            data = data.toString();
+                            callback(null, {
+                                server: server,
+                                cmd: cmd,
+                                started: start,
+                                millisecs: new Date().getTime() - start,
+                                ts: new Date().getTime(),
+                                data: trim(data),
+                            });
+                        }).stderr.on('data', function(data) {
+                            console.log('STDERR: ' + data);
+                            callback(data, null);
                         });
-                    }).stderr.on('data', function(data) {
-                        console.log('STDERR: ' + data);
-                        callback(data, null);
                     });
+                }).connect({
+                    host: server,
+                    port: 22,
+                    username: 'root',
+                    privateKey: require('fs').readFileSync('/root/.ssh/id_rsa')
                 });
-            }).connect({
-                host: server,
-                port: 22,
-                username: 'root',
-                privateKey: require('fs').readFileSync('/root/.ssh/id_rsa')
-            });
-        }
-    );
+            }
+        );
+    });
 });
 
 async.parallelLimit(tasks, limit, function(err, results) {
