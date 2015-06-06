@@ -77,13 +77,15 @@ async.parallelLimit(tasks, limit, function(err, results) {
             res.end('holla');
         });
 
-app.get('/hosts', function(req, res){
-res.json(_.pluck(results, 'server'));
-});
+        app.get('/hosts', function(req, res) {
+            res.json(_.uniq(_.pluck(results, 'server')));
+        });
 
         app.get('/host/:host', function(req, res) {
-var R = _.where(results, {server: req.params.host});
-                res.json(R);
+            var R = _.where(results, {
+                server: req.params.host
+            });
+            res.json(R);
         });
 
         app.listen(process.env.PORT || 31992);
