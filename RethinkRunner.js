@@ -11,7 +11,7 @@ r.connect({
     connection = conn;
 
 
-    r.table('authors1').changes().run(connection, function(err, cursor) {
+   r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).changes().run(connection, function(err, cursor) {
         if (err) throw err;
         cursor.each(function(err, row) {
             if (err) throw err;
