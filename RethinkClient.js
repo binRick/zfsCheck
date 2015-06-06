@@ -2,20 +2,25 @@
 
 var r = require('rethinkdb'),
     os = require('os'),
-    fs = require('fs');
+    fs = require('fs'),
+    trim = require('trim'),
+    child = require('child_process');
+
+var vmFields = ['ctid', 'status', 'private'];
+var cmd = '/usr/sbin/vzlist -ajo ' + vmFields.join(',');
+var VMs = JSON.parse(child.execSync(cmd).toString());
+
+//console.log(VMs);
+//process.exit();
 
 r.connect({
     host: process.env.rethinkHost,
     port: process.env.rethinkPort,
 }, function(err, conn) {
     if (err) throw err;
-
     r.dbCreate(process.env.rethinkDatabase).run(conn, function(err, result) {
         r.db(process.env.rethinkDatabase).tableCreate(process.env.rethinkTable).run(conn, function(err, result) {
             r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
-//                insert({
-//                                hostname: os.hostname(),
-//                            }).
             filter(r.row('hostname').eq(os.hostname())).update({
                 os: {
                     ts: new Date().getTime(),
@@ -28,6 +33,7 @@ r.connect({
                     totalmem: os.totalmem(),
                     platform: os.platform(),
                     kernel: os.release(),
+                    vms: VMs,
                 }
             }).
             run(conn, function(err, res) {
@@ -36,21 +42,21 @@ r.connect({
                 console.log(typeof(res['generated_keys']));
                 console.log(typeof(res['_type']));
                 if (typeof(res['errors']) == 'number') {
-if(res['errors']==0){
+                    if (res['errors'] == 0) {
 
-if(res['replaced']==0){
-            r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
-                insert({
+                        if (res['replaced'] == 0) {
+                            r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
+                            insert({
                                 hostname: os.hostname(),
                             }).
-            run(conn, function(err, res) {
-                if (err) throw err;
-                console.log(res);
-});
+                            run(conn, function(err, res) {
+                                if (err) throw err;
+                                console.log(res);
+                            });
 
-}
-}
-}
+                        }
+                    }
+                }
                 if (typeof(res['_type']) == 'number') {
                     console.log('query');
                     res.toArray(function(err, result) {
