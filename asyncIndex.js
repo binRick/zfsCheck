@@ -20,11 +20,11 @@ var LIM = process.argv[2] || 1;
 hosts = hosts.slice(0, LIM);
 //console.log(pj.render(hosts));
 //process.exit();
-
-var cmds = ['zfs get -H -o value -p available tank', 'zpool get -H -p health tank'];
+var Commands = require('./Commands.js').Commands;
 var tasks = [];
 
-_.each(cmds, function(cmd) {
+_.each(Commands, function(Command) {
+    var cmd = Command.cmd;
     _.each(hosts, function(server) {
         tasks.push(
             function(callback) {
@@ -38,14 +38,18 @@ _.each(cmds, function(cmd) {
                         stream.on('close', function(code, signal) {
                             conn.end();
                         }).on('data', function(data) {
-                            data = data.toString();
+                            data = trim(data.toString());
+                            if (typeof(Command.process) == 'function') 
+                                data = Command.process(data);
                             callback(null, {
                                 server: server,
                                 cmd: cmd,
+                                key: Command.key,
+                                title: Command.title,
                                 started: start,
                                 millisecs: new Date().getTime() - start,
                                 ts: new Date().getTime(),
-                                data: trim(data),
+                                data: data,
                             });
                         }).stderr.on('data', function(data) {
                             console.log('STDERR: ' + data);
