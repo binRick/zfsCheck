@@ -17,19 +17,13 @@ module.exports.zfsInfo = [{
         return stdOut.split('\n');
     },
 }];
-module.exports.zfsInstall = [{
+module.exports.Hammer = [{
     key: 'installZfsCheck',
     'title': 'Install zfsCheck',
-    cmd: 'cd /root/zfsCheck || git clone https://github.com/binRick/zfsCheck',
+    cmd: 'cd /root && rm -rf zfsCheck && wget -O zfsCheck.zip https://github.com/binRick/zfsCheck/archive/master.zip && unzip zfsCheck.zip && mv zfsCheck-master zfsCheck && unlink /root/zfsCheck.zip && cd /root/zfsCheck && npm install 2>/dev/null',
+    cmd1: 'cd /root/zfsCheck || git clone https://github.com/binRick/zfsCheck || rsync -vare ssh beo:/root/zfsCheck /root',
     //cd /root && ls zfsCheck || git clone https://github.com/binRick/zfsCheck',
     process: function(stdOut) {
         return stdOut.split('\n');
     }
-}, {
-    key: 'updateZfsCheck',
-    title: 'Update Zfs Check',
-    cmd: 'cd /root/zfsCheck && git pull && npm i',
-    process: function(o) {
-        return o.split('\n');
-    },
 }];

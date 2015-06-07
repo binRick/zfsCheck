@@ -100,7 +100,6 @@ async.parallelLimit(tasks, limit, function(err, results) {
 
         app.listen(process.env.PORT || 31992);
 
-
-
-    }
+    }else
+	process.exit();
 });
