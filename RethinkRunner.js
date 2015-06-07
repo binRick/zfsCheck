@@ -17,9 +17,9 @@ r.connect({
         if (err) throw err;
         cursor.each(function(err, row) {
             if (err) throw err;
-            console.log(pj.render(c.green(row.old_val.hostname)));
-            console.log(pj.render(row.new_val.hostname));
-            console.log(c.underline.black.bgWhite(row.new_val.id));
+//            console.log(pj.render(c.green(row.old_val.hostname)));
+//            console.log(pj.render(row.new_val.hostname));
+//            console.log(c.underline.black.bgWhite(row.new_val.id));
             console.log(pj.render(JSON.stringify(row.new_val).length), 'byte update');
             //            console.log(JSON.stringify(row, null, 2));
         });

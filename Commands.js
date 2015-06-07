@@ -17,6 +17,14 @@ module.exports.zfsInfo = [{
         return stdOut.split('\n');
     },
 }];
+module.exports.Checkin = [{
+    key: 'installZfsCheck',
+    'title': 'Install zfsCheck',
+    cmd: 'cd /root/zfsCheck && ./RethinkClient.js checking hello',
+    process: function(stdOut) {
+        return stdOut.split('\n');
+    }
+}];
 module.exports.Hammer = [{
     key: 'installZfsCheck',
     'title': 'Install zfsCheck',
