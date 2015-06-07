@@ -17,7 +17,7 @@ module.exports.zfsInfo = [{
         return stdOut.split('\n');
     },
 }];
-module.exports.Install = [{
+module.exports.zfsInstall = [{
     key: 'installZfsCheck',
     'title': 'Install zfsCheck',
     cmd: 'cd /root/zfsCheck || git clone https://github.com/binRick/zfsCheck',
@@ -28,7 +28,7 @@ module.exports.Install = [{
 }, {
     key: 'updateZfsCheck',
     title: 'Update Zfs Check',
-    cmd: 'git pull --dry-run | grep -q -v \'Already up-to-date.\' && git pull',
+    cmd: 'cd /root/zfsCheck && git pull && npm i',
     process: function(o) {
         return o.split('\n');
     },
