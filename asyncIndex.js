@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var c = require('chalk'),
+status = require('node-status'),
     async = require('async'),
     servers = ['cassi', 'enterprise'],
     _ = require('underscore'),
@@ -22,6 +23,13 @@ var Commands = require('./Commands.js')[process.argv[3] || 'zfsInfo'];
 
 var tasks = [];
 
+var Cmds = status.addItem("command", {
+  type: ['bar','percentage'],
+  max: Commands.length
+});
+status.start();
+
+
 _.each(Commands, function(Command) {
     var cmd = Command.cmd;
     _.each(hosts, function(server) {
@@ -29,6 +37,7 @@ _.each(Commands, function(Command) {
             function(callback) {
                 var conn = new Client();
                 var start = new Date().getTime();
+Cmds.inc();
                 conn.on('ready', function() {
                     var data = '';
                     //                console.log(c.green('Connected to', server));

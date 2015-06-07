@@ -20,6 +20,7 @@
     "async": "^1.2.0",
     "chalk": "^1.0.0",
     "express": "^4.12.4",
+    "node-status": "^0.1.4",
     "prettyjson": "^1.1.2",
     "rethinkdb": "^2.0.0-1",
     "ssh2": "^0.4.8",
