@@ -3,7 +3,6 @@
 var c = require('chalk'),
 status = require('node-status'),
     async = require('async'),
-    servers = ['cassi', 'enterprise'],
     _ = require('underscore'),
     fs = require('fs'),
     trim = require('trim'),
