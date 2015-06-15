@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var c = require('chalk'),
+r = require('rethinkdb'),
 status = require('node-status'),
     async = require('async'),
     _ = require('underscore'),
@@ -29,6 +30,11 @@ var Cmds = status.addItem("command", {
 });
 status.start();
 
+r.connect({
+    host: process.env.rethinkHost,
+    port: process.env.rethinkPort,
+}, function(err, conn) {
+    if (err) throw err;
 
 _.each(Commands, function(Command) {
     var cmd = Command.cmd;
@@ -73,7 +79,6 @@ Cmds.inc();
             }
         );
     });
-});
 
 async.parallelLimit(tasks, limit, function(err, results) {
     if (err) throw err;
@@ -90,7 +95,26 @@ async.parallelLimit(tasks, limit, function(err, results) {
         app.get('/hosts', function(req, res) {
             res.json(_.uniq(_.pluck(results, 'server')));
         });
+/*
+        app.get('/sethost/:host/:key/:val', function(req, res) {
 
+
+            var R = _.where(results, {
+                server: req.params.host
+            });
+R[req.params.key] = req.params.val;
+
+    r.dbCreate(process.env.rethinkDatabase).run(conn, function(err, result) {
+        r.db(process.env.rethinkDatabase).tableCreate(process.env.rethinkTable).run(conn, function(err, result) {
+            r.db(process.env.rethinkDatabase).table(process.env.rethinkTable).
+            filter(r.row('hostname').eq(req.params.host)).update(R).
+            run(conn, function(err, res) {
+                if (err) throw err;
+            res.json(R);
+});
+        });
+});
+});*/
         app.get('/host/:host', function(req, res) {
             var R = _.where(results, {
                 server: req.params.host
@@ -102,4 +126,6 @@ async.parallelLimit(tasks, limit, function(err, results) {
 
     }else
 	process.exit();
+});
+});
 });

@@ -2,7 +2,8 @@ module.exports.zfsInfo = [{
     key: 'availableBytes',
     'title': 'Available Bytes',
     cmd: 'zfs get -H -o value -p available tank',
-}, {
+}]; 
+module.exports.zfsInfos = [{
     key: 'poolHealth',
     'title': 'Pool Health',
     cmd: 'zpool get -H -p health tank',
